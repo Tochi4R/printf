@@ -1,48 +1,86 @@
 #include "main.h"
+#include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 
-int _printf(const char *format, ...) {
-    int count = 0;
-    va_list args;
-    va_start(args, format);
-    while (*format != '\0') {
-        if (*format == '%') {
-            format++;
-            if (*format == '\0') break;
-            switch (*format) {
-                case 'c': {
-                    char c = (char) va_arg(args, int);
-                    putchar(c);
-                    count++;
-                    break;
-                }
-                case 's': {
-                    char *s = va_arg(args, char*);
-                    while (*s != '\0') {
-                        putchar(*s);
-                        s++;
-                        count++;
-                    }
-                    break;
-                }
-                case '%': {
-                    putchar('%');
-                    count++;
-                    break;
-                }
-                default: {
-                    // handle invalid conversion specifier
-                    return -1;
-                }
-            }
-        } else {
-            putchar(*format);
-            count++;
-        }
-        format++;
-    }
-    va_end(args);
-    return count;
+/**
+ * printIdentifiers - prints special characters
+ * @next: character after the %
+ * @arg: argument for the indentifier
+ * Return: the number of characters printed
+ * (excluding the null byte used to end output to strings)
+ */
+
+int printIdentifiers(char next, va_list arg)
+{
+	int functsIndex;
+
+	identifierStruct functs[] = {
+		{"c", print_char},
+		{"s", print_str},
+		{"d", print_int},
+		{"i", print_int},
+		{NULL, NULL}
+	};
+
+	for (functsIndex = 0; functs[functsIndex].indentifier != NULL; functsIndex++)
+	{
+		if (functs[functsIndex].indentifier[0] == next)
+			return (functs[functsIndex].printer(arg));
+	}
+	return (0);
 }
 
+/**
+ * _printf - mimic printf from stdio
+ * Description: produces output according to a format
+ * write output to stdout, the standard output stream
+ * @format: character string composed of zero or more directives
+ *
+ * Return: the number of characters printed
+ * (excluding the null byte used to end output to strings)
+ * return -1 for incomplete identifier error
+ */
+
+int _printf(const char *format, ...)
+{
+	unsigned int i;
+	int identifierPrinted = 0, charPrinted = 0;
+	va_list arg;
+
+	va_start(arg, format);
+	if (format == NULL)
+		return (-1);
+
+	for (i = 0; format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			_putchar(format[i]);
+			charPrinted++;
+			continue;
+		}
+		if (format[i + 1] == '%')
+		{
+			_putchar('%');
+			charPrinted++;
+			i++;
+			continue;
+		}
+		if (format[i + 1] == '\0')
+			return (-1);
+
+		identifierPrinted = printIdentifiers(format[i + 1], arg);
+		if (identifierPrinted == -1 || identifierPrinted != 0)
+			i++;
+		if (identifierPrinted > 0)
+			charPrinted += identifierPrinted;
+
+		if (identifierPrinted == 0)
+		{
+			_putchar('%');
+			charPrinted++;
+		}
+	}
+	va_end(arg);
+	return (charPrinted);
+}
