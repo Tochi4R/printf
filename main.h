@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 
+void print_int(int n);
 int _putchar(char c);
 int print_int(va_list arg);
 int print_unsigned(va_list arg);

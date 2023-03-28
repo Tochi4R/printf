@@ -1,3 +1,4 @@
+#include "main.h"
 /*
  * print_int - Prints an integer to stdout
  *
