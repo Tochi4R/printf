@@ -1,6 +1,6 @@
 #include <stdarg.h>
 #include <stdio.h>
-
+#include "main.h"
 /**
  * print_int - function that print the a format
  *
