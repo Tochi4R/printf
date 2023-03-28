@@ -1,7 +1,7 @@
 /*
  * print_int - Prints an integer to stdout
  *
- * print_int:
+ * print_int - input
  *
  * @n the integer to print
  *
